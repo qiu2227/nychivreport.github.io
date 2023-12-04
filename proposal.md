@@ -1,0 +1,100 @@
+Final project Proposal
+================
+Jake W. Coldiron,Zixuan Qiu,Tianyuan Deng,Aung Nay Win,Yuqi Cheng
+
+**Date:** 2023-11-10
+
+## Team registration
+
+- Jake W. Coldiron (jwc2177)
+- Zixuan Qiu (zq2227)
+- Tianyuan Deng (td2809)
+- Aung Nay Win (anw2158)
+- Yuqi Cheng (yc4382)
+
+## The project title
+
+### **New York City HIV/AIDS Report**
+
+**A HIV Epidemiological report aimed to investigate the correlation
+between HIV infection and socioeconomic status, population distribution,
+and medical resources in New York City.**
+
+### Motivation
+
+HIV/AIDS are still a significant public health challenge,in 2020, there
+were 100,712 people living with HIV in New York City. The vast
+population diversity and economic disparities of New York City, provide
+a unique landscape for studying how socioeconomic status, population
+distribution, and medical resources intersect to influence HIV infection
+rates within the in a dense urban environment city. The medical resource
+and economic status distribution often varies greatly across different
+boroughs and neighborhoods in nyc.Investigating how these disparities
+relate to HIV prevalence can shed light on the broader implications of
+socioeconomic on epidemiology and develop more targeted intervention
+strategies base on the different demographics condition.
+
+## Intended final products
+
+- **Data Processing**: Introduction the data sources,explain the process
+  of data collection and cleaning.
+
+- **Exploratory analyses Report**: A comprehensive report about HIV
+  trends in New York that include the factors such as infection rates,
+  demographic data,and medical resource distribution.
+
+- **Visualizations plot**: Create the charts, graphs, and maps
+  showcasing the geographical spread of HIV in New York, infection rates
+  in different race,sex and age. Showing the correlation between HIV
+  prevalence and socioeconomic disparities, such as the impact of rates
+  of sexual assault and drug-related crimes.” Compare the HIV medical
+  resource distribution with prevalance map.
+
+- **Statistics analysis** : An illustrative page that introduce the
+  statistics methodology in the analysis,the result and the diagnostics.
+
+- **Summary** A concise summary highlighting key findings, result and
+  discussion of project.
+
+- **Interactive Website**: A interactive website integrated the project
+  products that allow users to visit the project reportand explore the
+  data .
+
+- **Video Screenshot**: A two-minute narrated screencast illustrating
+  your project.
+
+## The anticipated data sources
+
+- The NYC open data
+  - <https://data.cityofnewyork.us/Health/HIV-AIDS-Diagnoses-by-Neighborhood-Sex-and-Race-Et/ykvb-493p>
+  - <https://data.cityofnewyork.us/Health/DOHMH-HIV-AIDS-Annual-Report/fju2-rdad>
+- AIDSVu
+  - <https://aidsvu.org/local-data/united-states/northeast/new-york/new-york-county/new-york-city/>
+- NYC health
+  - <https://www.nyc.gov/site/doh/health/health-topics/aids-hiv.page>
+- CDC
+  - <https://www.cdc.gov/nchs/pressroom/states/newyork/newyork.htm>
+
+## The planned analyses / visualizations / coding challenges
+
+- Statistics analysis: estimate the correlation between the HIV data and
+  the socioeconomic factor. How to choose statistics methodology and
+  interpret the resul.
+
+- Visualization: Build a interactive map that show the distribution of
+  HIV trend and related medical care resource in NY, create a
+
+- Coding : Utilize Rstudio to establish linear regression model and
+  create a concise website
+
+## The planned timeline
+
+| Data         | Description         | Work products                                                     |
+|--------------|---------------------|-------------------------------------------------------------------|
+| NOV.11       | Team and proposal   | The proposal                                                      |
+| NOV.13-17    | Review meeting      | modify and perfect the proposal                                   |
+| NOV.17-24    | Data process        | Data Processing and Exploratory analyses                          |
+| NOV.25-DEC.2 | Analysis            | Visualizations and Statistics linear model and project summary    |
+| DEC.2-9      | Website             | Summary,Interactive Website，Video Screenshot and Peer assessment |
+| Dec.9        | Report              | Submit the final report                                           |
+| Dec.14       | In class Discussion | hearing about projects!                                           |

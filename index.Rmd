@@ -1,0 +1,274 @@
+---
+title: "Final Project"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+---
+
+### **New York City  HIV/AIDS Report**
+**A HIV Epidemiological report aimed to investigate the correlation between HIV infection and socioeconomic status, population distribution, and medical resources in New York City.**
+
+<img src="images/hiv.png" style="height:80%;">
+
+### Motivation 
+  HIV/AIDS are still  a significant public health challenge,in 2020, there were 100,712 people living with HIV in New York City. The vast population diversity and economic disparities of New York City, provide a unique landscape for studying how socioeconomic status, population distribution, and medical resources intersect to influence HIV infection rates within the in a dense urban environment city.
+  The medical resource and economic status distribution often varies greatly across different boroughs and neighborhoods in nyc.Investigating how these disparities relate to HIV prevalence can shed light on the broader implications of socioeconomic on epidemiology and develop more targeted intervention strategies base on the different demographics condition. 
+
+### Data
+To prepare the data analysis, we load these following libraries:
+
+* `tidyverse`
+* `rvest`
+* `httr`
+* `plotly`
+* `ggplot2`
+* `leaflet`
+* `caret`
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(rvest)
+library(httr)
+library(plotly)
+library(ggplot2)
+library(leaflet)
+library(caret)
+```
+
+# Data processing
+
+The datasets used in this study were sourced from the NYC OpenData portal, a public platform offering diverse datasets from New York City agencies. We utilized the R programming language, employing the `httr` package to perform HTTP GET requests for retrieving the data. Specifically, two datasets, `nyc_HIV1` and `nyc_HIV2`, were accessed from distinct URLs with set record limits of 10,000 and 22,000 respectively. These datasets, containing information on HIV statistics, were parsed and filtered to include data from the year 2017 onwards. Additionally, a dataset for HIV service resources, `HIV_service`, was similarly obtained with a record limit of 1,000. This dataset was processed to select critical columns like facility information and geographical coordinates. This process ensured a comprehensive and tailored extraction of data pertinent to our analysis of HIV trends and resources in New York City.
+
+Inputing the New York HIV data from NYC opendata 
+```{r message=FALSE, warning=FALSE}
+nyc_HIV1=
+  GET("https://data.cityofnewyork.us/resource/ykvb-493p.csv",
+  query = list("$limit" = 10000)) |>
+  content("parsed")|>
+  filter(year >= 2017)
+
+
+nyc_HIV2=
+  GET("https://data.cityofnewyork.us/resource/dxnu-p2qd.csv",
+  query = list("$limit" = 22000)) |>
+  content("parsed")|>
+  filter(year >= 2017)
+  
+```
+
+Inputing HIV service resource data
+```{r message=FALSE}
+HIV_service=
+  GET("https://data.cityofnewyork.us/resource/pwts-g83w.csv",
+  query = list("$limit" = 1000)) |>
+  content("parsed")|>
+  select(unique_id,facilityname,service_type, address,borough,state,zipcode,latitude,longitude)
+  
+```
+**A short  clear description of where and how data were obtained. explain the variables means in the data**
+**Calculate the sum, mean, median, standard deviation of HIV/AIDS indicators** 
+```{r}
+colnames(nyc_HIV1)
+colnames(nyc_HIV2)
+colnames(HIV_service)
+```
+Varialbes in the nyc_HIV1 and nyc_HIV2 Dataset
+
+* `year`: The year of data recording.
+* `borough`: The borough in New York City.
+* `neighbourhood`: The specific neighbourhood.
+* `sex`: Gender of individuals.
+* `race`: Racial category.
+* `age`: Age of individuals.
+* `hiv_diagnoses_num`: The number of new HIV diagnoses.
+* `hiv_diagnoses_num_per_100k`: The rate of new HIV diagnoses per 100,000 population.
+* `hiv_aids_concurrent_num`: The number of people diagnosed with both HIV and AIDS concurrently.
+* `concurrent_hiv_aids_among_all`: The proportion of HIV diagnoses that are concurrent with an AIDS diagnosis.
+* `aids_diagnoses_num`: The number of new AIDS diagnoses.
+* `aids_diagnoses_num_per_100k`: The rate of new AIDS diagnoses per 100,000 population.
+
+Variables in the HIV_service datasets
+
+* `unique_id`: Identifier for the service resource.
+* `facilityname`: Name of the facility offering HIV services.
+* `service_type`: Type of service provided.
+* `address`, `borough`, `state`, `zipcode`: Address details of the facility.
+* `latitude`, `longitude`: Geographical coordinates.
+
+# Visualizations
+**Number of HIV/AIDS diagnoses by race, sex, and age group.**
+```{r}
+All <- nyc_HIV1 %>% 
+  filter(sex == "All" & race == "All" & borough == "All")
+
+Female <- nyc_HIV1 %>% 
+  filter(sex == "Female" & borough == "All" & race !="All")
+
+Male <- nyc_HIV1 %>% 
+  filter(sex == "Male"  & borough == "All" & race !="All")
+
+graph1 = bind_rows(Female, Male)
+
+nyc_HIV1$hiv_diagnoses_num <- as.integer(nyc_HIV1$hiv_diagnoses_num)
+nyc_HIV2$hiv_diagnoses_num <- as.integer(nyc_HIV2$hiv_diagnoses_num)
+
+ggplot(graph1, aes(x=race, y=hiv_diagnoses_num, fill=sex)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = "Race", y = "Number of HIV/AIDS Diagnoses", fill = "Sex")
+
+# Graph Age 
+age_summary <- nyc_HIV2 %>%
+  filter(age != "All" & race == "All" & borough == "All") %>%
+  group_by(age) %>%
+  summarise(total_hiv_diagnoses = sum(hiv_diagnoses_num))
+
+ggplot(age_summary, aes(x = age, y = total_hiv_diagnoses)) +
+  geom_bar(stat = "identity", color = "yellow", width = 0.7) +
+  labs(title = "Total HIV Diagnoses by Age Group",
+       x = "Age Group",
+       y = "Total HIV Diagnoses") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+The bar chart titled "Total HIV Diagnoses by Age Group" presents the distribution of HIV diagnoses across various age groups. The x-axis categorizes the data into age ranges: 13-19, 20-29, 30-39, 40-49, 50-59, and 60+. The y-axis represents the count of total HIV diagnoses. A prominent observation from the chart is that the highest number of diagnoses occurs in the 20-29 age group, followed by the 30-39 age group, suggesting a higher incidence of HIV in these younger demographics. The number of diagnoses declines with increasing age, with the fewest cases in the youngest (13-19) and oldest (60+) age brackets. This visual representation highlights the importance of targeted HIV prevention and education efforts towards younger populations who are significantly more affected.
+
+**The map of NYC HIV service resources location.**
+```{r}
+if (!require(leaflet)) install.packages('leaflet')
+library(leaflet)
+filtered_data = HIV_service[HIV_service$longitude != 0 & HIV_service$latitude != 0,]
+
+ leaflet(filtered_data) %>%
+  addProviderTiles(providers$OpenStreetMap) %>%
+  addCircleMarkers(
+    ~longitude, ~latitude,
+    radius = 4,
+    popup = ~paste("<strong>Facility Name:</strong>", facilityname,
+                   "<br><strong>Service Type:</strong>", service_type,
+                   "<br><strong>Address:</strong>", address,
+                   "<br><strong>Borough:</strong>", borough,
+                   "<br><strong>Zip:</strong>", zipcode)
+  )
+
+```
+
+summary:
+
+**Distribution of the HIV/AIDS diagnoses by neighborhood.** 
+```{r warning=FALSE}
+#work
+# I'll see if I can find the log&lat for the neighborhoods
+diagnoses <- nyc_HIV1 %>% 
+  select(borough, hiv_diagnoses_num)
+
+# Plot bar chart
+ggplot(diagnoses, aes(x = reorder(borough, hiv_diagnoses_num), y = hiv_diagnoses_num)) +
+  geom_col() +
+  labs(x = "Neighborhood",
+       y = "Number of HIV Diagnoses",
+       title = "HIV Diagnoses by Neighborhood") +
+  coord_flip()
+```
+
+The horizontal bar chart titled "HIV Diagnoses by Neighborhood" displays the number of HIV diagnoses across different neighborhoods in New York City. The x-axis quantifies the number of HIV diagnoses, while the y-axis lists the neighborhoods, including Staten Island, Bronx, Brooklyn, Manhattan, Queens, and a category for 'All', which may represent the total across all neighborhoods or a category for unclassified data.Brooklyn appears to have the highest number of HIV diagnoses, followed by Manhattan and Queens. The Bronx and Staten Island have comparatively fewer diagnoses. This distribution highlights the varying impact of HIV across different areas, which may reflect differences in population density, access to healthcare, or effectiveness of public health interventions. Understanding this variability is crucial for targeted HIV prevention and treatment strategies.
+
+**Trend analysis:analyze the trend of the number of HIV/AIDS diagnoses over time.**
+```{r}
+All <- nyc_HIV1 %>% 
+  filter(sex == "All" & race == "All" & borough == "All")
+
+# Plot diagnoses over time
+ggplot(All, aes(x = year, y = hiv_diagnoses_num)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) + 
+  labs(
+    title = "HIV Diagnoses Trend (All Sex)",
+    x = "Year",
+    y = "Number of Diagnoses"
+  )
+```
+
+The scatter plot with a trend line, titled "HIV Diagnoses Trend (All Sex)," illustrates the number of HIV/AIDS diagnoses from 2017 through 2021. The x-axis represents the year, and the y-axis indicates the number of diagnoses. Each dot corresponds to the total diagnoses reported in a given year. The blue line represents a linear regression model, showing a clear downward trend in the number of diagnoses over the five-year period. This suggests a significant decrease in new HIV/AIDS cases annually, which could be indicative of effective public health interventions, increased awareness, and advancements in preventive measures. The consistent decline over consecutive years highlights a positive direction in the fight against HIV/AIDS.
+
+# Exploratory statistical analyses
+**Correlation analysis:After the Visualizations is there any association between different variables such as neighborhood, age, gender, and race.**
+
+**T-test for HPV prevalence in gender-specific populations.**
+```{r}
+nyc_HIV1$hiv_diagnoses_num <- as.numeric(nyc_HIV1$hiv_diagnoses_num)
+
+# Extracting data for females and males
+female_data <- na.omit(nyc_HIV1[nyc_HIV1$sex == "Female",]$hiv_diagnoses_num)
+male_data <- na.omit(nyc_HIV1[nyc_HIV1$sex == "Male",]$hiv_diagnoses_num)
+
+# Perform T-test
+t.test(female_data, male_data)
+```
+summary:
+The t-test passed the test of significance indicating that there was a significant difference in the number of males and females with HIV.
+
+**Test whether "hiv_diagnoses_num" is significantly different across ethnicities.**
+```{r}
+anova1 <- anova(lm(hiv_diagnoses_num ~ race, data = nyc_HIV1))
+print(anova1)
+```
+summary:
+The ANOVA passed the test of significance, indicating that there is indeed a significant difference in the number of people of different races who have HIV.
+
+**Test whether "hiv_diagnoses_num" is significantly different between age groups.**
+```{r}
+anova2 <- anova(lm(hiv_diagnoses_num ~ age, data = nyc_HIV2))
+print(anova2)
+```
+summary:
+The ANOVA passed the test of significance indicating that there is a significant difference in the number of HIV in different age groups.
+
+**Test whether there is a significant difference between people of different races and different age groups.**
+```{r}
+race_table <- table(nyc_HIV1$race, nyc_HIV1$sex)
+race_table
+# Perform chi-square test
+chisq.test(race_table)
+```
+summary:
+The chi-square test passes the test of significance, indicating that there is a significant relationship between race and gender.
+
+#### Linear regression analysis
+```{r}
+# Defining a Unique Thermal Coding Processor
+library(caret)
+encoder <- dummyVars(~ borough + sex + race, data = nyc_HIV1)
+# Solo thermal coding of data
+encoded_data <- predict(encoder, newdata = nyc_HIV1)
+# Merging the coded and original data sets
+nyc_HIV3 <- cbind(nyc_HIV1, encoded_data)
+nyc_HIV4<-nyc_HIV3[,-c(2,3,4,5,7,8,9,10,11,12,18,21)]
+model <- lm(hiv_diagnoses_num ~. , data = nyc_HIV4)
+summary(model)
+```
+summary:
+The coefficients of all variables passed the significance test, indicating that all of these independent variables have a significant effect on hiv_diagnoses_num. The coefficient before the variable "boroughStaten\\\nIsIand" has the largest absolute value, which means that it has the largest effect on the number of HIV patients. In addition, the coefficients before these variables are all negative, indicating that they all negatively affect hiv_diagnoses_num.Finally, the multiple linear regression model constructed ishiv_diagnoses_num=4514.4981-2.0224*year-354.5227*boroughBronx-358.4969*boroughBrooklyn-362.8923*boroughManhattan-363.2155*boroughQueens-373.2117*boroughStaten\\nIsland-26.8822*sexFemale-6.1453*sexMale-62.6910*raceAsian /Pacific\\nIslander-36.4375*raceBlack-41.7176*raceLatino/Hispanic-65.3393*raceOther/Unknown-57.9514*raceWhite.
+
+#### Regression model test
+```{r}
+#Drawing demonstration
+par(mfrow=c(2, 2))  
+plot(model)
+
+# Plot of predicted values against residuals
+residuals <- resid(model)
+fitted_values <- predict(model)
+plot(fitted_values, residuals,
+     xlab = "Fitted values",
+     ylab = "Residuals",
+     main = "Residuals vs. Fitted")
+abline(h = 0, col = "red")
+```
+
+**summary:Here is a test of the effectiveness of the regression model constructed above. Use plot(model) to draw residual plots, scatter plots and other diagnostic plots. Residual plots are used to check for linear properties, heteroskedasticity, outliers, etc. Scatter plots can be used to check for correlation between independent variables, and QQ plots are used to check whether the residuals conform to the assumption of normal distribution. Here, we can see that the residuals do not conform well to normality and randomness. Analyzing the reason, it may be due to the existence of individual outliers, which affects the distribution of the data and the distribution of the residuals, making them not conform to normality and randomness.**
+
+**if github md knit fail,change to the html output“**

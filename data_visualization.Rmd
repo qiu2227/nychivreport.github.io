@@ -1,0 +1,116 @@
+---
+title: "Data Visualization"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+---
+```{r message=FALSE, echo=FALSE, warning=FALSE, include=FALSE}
+library(tidyverse)
+library(rvest)
+library(httr)
+library(plotly)
+library(ggplot2)
+
+#input the New York HIV data from NYC opendata 
+nyc_HIV1=
+  GET("https://data.cityofnewyork.us/resource/ykvb-493p.csv",
+  query = list("$limit" = 10000)) |>
+  content("parsed")|>
+  filter(year >= 2017)
+
+
+nyc_HIV2=
+  GET("https://data.cityofnewyork.us/resource/dxnu-p2qd.csv",
+  query = list("$limit" = 22000)) |>
+  content("parsed")|>
+  filter(year >= 2017)
+
+HIV_service=
+  GET("https://data.cityofnewyork.us/resource/pwts-g83w.csv",
+  query = list("$limit" = 1000)) |>
+  content("parsed")|>
+  select(unique_id,facilityname,service_type, address,borough,state,zipcode,latitude,longitude)
+  
+
+colnames(nyc_HIV1)
+colnames(nyc_HIV2)
+head(nyc_HIV1)
+```
+
+## **Number of HIV/AIDS diagnoses by race, sex, and age group**
+```{r}
+All <- nyc_HIV1 %>% 
+  filter(sex == "All" & race == "All" & borough == "All")
+
+Female <- nyc_HIV1 %>% 
+  filter(sex == "Female" & borough == "All" & race !="All")
+
+Male <- nyc_HIV1 %>% 
+  filter(sex == "Male"  & borough == "All" & race !="All")
+
+graph1 = bind_rows(Female, Male)
+
+nyc_HIV1$hiv_diagnoses_num <- as.integer(nyc_HIV1$hiv_diagnoses_num)
+nyc_HIV2$hiv_diagnoses_num <- as.integer(nyc_HIV2$hiv_diagnoses_num)
+
+ggplot(graph1, aes(x=race, y=hiv_diagnoses_num, fill=sex)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = "Race", y = "Number of HIV/AIDS Diagnoses", fill = "Sex")
+
+# Graph Age 
+age_summary <- nyc_HIV2 %>%
+  filter(age != "All" & race == "All" & borough == "All") %>%
+  group_by(age) %>%
+  summarise(total_hiv_diagnoses = sum(hiv_diagnoses_num))
+
+ggplot(age_summary, aes(x = age, y = total_hiv_diagnoses)) +
+  geom_bar(stat = "identity", color = "yellow", width = 0.7) +
+  labs(title = "Total HIV Diagnoses by Age Group",
+       x = "Age Group",
+       y = "Total HIV Diagnoses") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+summary:
+
+## **Distribution of the HIV/AIDS diagnoses by neighborhood**
+```{r warning=FALSE}
+#work
+# I'll see if I can find the log&lat for the neighborhoods
+diagnoses <- nyc_HIV1 %>% 
+  select(borough, hiv_diagnoses_num)
+
+# Plot bar chart
+ggplot(diagnoses, aes(x = reorder(borough, hiv_diagnoses_num), y = hiv_diagnoses_num)) +
+  geom_col() +
+  labs(x = "Neighborhood",
+       y = "Number of HIV Diagnoses",
+       title = "HIV Diagnoses by Neighborhood") +
+  coord_flip()
+```
+
+summary:
+
+## **Trend analysis:analyze the trend of the number of HIV/AIDS diagnoses over time**
+```{r message=FALSE}
+#work
+#work
+All <- nyc_HIV1 %>% 
+  filter(sex == "All" & race == "All" & borough == "All")
+
+# Plot diagnoses over time
+ggplot(All, aes(x = year, y = hiv_diagnoses_num)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) + 
+  labs(
+    title = "HIV Diagnoses Trend (All Sex)",
+    x = "Year",
+    y = "Number of Diagnoses"
+  )
+```
+
+summary:

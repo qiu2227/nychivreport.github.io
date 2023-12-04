@@ -1,0 +1,44 @@
+---
+title: "Interactive Maps"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+---
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(rvest)
+library(httr)
+library(plotly)
+library(leaflet)
+
+HIV_service=
+  GET("https://data.cityofnewyork.us/resource/pwts-g83w.csv",
+  query = list("$limit" = 1000)) |>
+  content("parsed")|>
+  select(unique_id,facilityname,service_type, address,borough,state,zipcode,latitude,longitude)
+  
+```
+
+## **The map of NYC HIV service resources location.**
+```{r}
+filtered_data = HIV_service[HIV_service$longitude != 0 & HIV_service$latitude != 0,]
+
+leaflet(filtered_data) %>%
+  addProviderTiles(providers$OpenStreetMap) %>%
+  addCircleMarkers(
+    ~longitude, ~latitude,
+    radius = 4,
+    popup = ~paste("<strong>Facility Name:</strong>", facilityname,
+                   "<br><strong>Service Type:</strong>", service_type,
+                   "<br><strong>Address:</strong>", address,
+                   "<br><strong>Borough:</strong>", borough,
+                   "<br><strong>Zip:</strong>", zipcode)
+  )
+
+```
+
+summary:
+

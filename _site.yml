@@ -1,0 +1,18 @@
+name: "Yay internet!"
+output_dir: "."
+navbar:
+  title: "Home"
+  right:
+    - text: "Data Visualization"
+      href: data_visualization.html
+    - text: "Interactive Maps"
+      href: interactive_maps.html
+    - text: "Statistical Models"
+      href: statistical_models.html
+    - icon: fa-envelope fa-lg
+      href: mailto:<anw2158@cumc.columbia.edu,jwc2177@cumc.columbia.edu, zq2227@cumc.columbia.edu, yc4382@cumc.columbia.edu, td2809@cumc.columbia.edu >
+    - icon: fa-github fa-lg
+      href: https://github.com/JakeWColdiron/p8105_final_project/
+output:
+  html_document:
+    theme: simplex

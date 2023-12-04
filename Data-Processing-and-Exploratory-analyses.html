@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Data-Processing-and-Exploratory-analyses</title>
+
+<script src="site_libs/header-attrs-2.24/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/simplex.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Home</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="data_visualization.html">Data Visualization</a>
+</li>
+<li>
+  <a href="interactive_maps.html">Interactive Maps</a>
+</li>
+<li>
+  <a href="statistical_models.html">Statistical Models</a>
+</li>
+<li>
+  <a href="mailto:&lt;anw2158@cumc.columbia.edu,jwc2177@cumc.columbia.edu, zq2227@cumc.columbia.edu, yc4382@cumc.columbia.edu, td2809@cumc.columbia.edu &gt;">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://github.com/JakeWColdiron/p8105_final_project/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+
+</div>
+
+
+<div id="data-processing-and-exploratory-analyses"
+class="section level1">
+<h1>Data Processing and Exploratory analyses</h1>
+<p>Jake W. Coldiron,Zixuan Qiu,Tianyuan Deng,Aung Nay Win,Yuqi Cheng</p>
+<p><strong>Date:</strong> 2023-11-10</p>
+<pre class="r"><code>library(tidyverse)
+library(rvest)
+library(httr)
+library(plotly)</code></pre>
+</div>
+<div id="data-processing" class="section level1">
+<h1>Data processing</h1>
+<pre class="r"><code>#input the New York HIV data from NYC opendata 
+nyc_HIV1=
+  GET(&quot;https://data.cityofnewyork.us/resource/ykvb-493p.csv&quot;,
+  query = list(&quot;$limit&quot; = 10000)) |&gt;
+  content(&quot;parsed&quot;)|&gt;
+  filter(year &gt;= 2017)</code></pre>
+<pre><code>## Warning: One or more parsing issues, call `problems()` on your data frame for
+## details, e.g.:
+##   dat &lt;- vroom(...)
+##   problems(dat)</code></pre>
+<pre class="r"><code>nyc_HIV2=
+  GET(&quot;https://data.cityofnewyork.us/resource/dxnu-p2qd.csv&quot;,
+  query = list(&quot;$limit&quot; = 22000)) |&gt;
+  content(&quot;parsed&quot;)|&gt;
+  filter(year &gt;= 2017)</code></pre>
+<pre class="r"><code>#HIV service resource 
+HIV_service=
+  GET(&quot;https://data.cityofnewyork.us/resource/pwts-g83w.csv&quot;,
+  query = list(&quot;$limit&quot; = 1000)) |&gt;
+  content(&quot;parsed&quot;)|&gt;
+  select(unique_id,facilityname,service_type, address,borough,state,zipcode,latitude,longitude)</code></pre>
+<p><strong>A short clear description of where and how data were
+obtained. explain the variables means in the data</strong>
+<strong>Calculate the sum, mean, median, standard deviation of HIV/AIDS
+indicators</strong></p>
+</div>
+<div id="visualizations" class="section level1">
+<h1>Visualizations</h1>
+<p><strong>Shows the number of HIV/AIDS diagnoses by race, sex, and age
+group.</strong></p>
+<pre class="r"><code>#work
+#work
+colnames(nyc_HIV1)</code></pre>
+<pre><code>##  [1] &quot;year&quot;                          &quot;borough&quot;                      
+##  [3] &quot;neighborhood&quot;                  &quot;sex&quot;                          
+##  [5] &quot;race&quot;                          &quot;hiv_diagnoses_num&quot;            
+##  [7] &quot;hiv_diagnoses_num_per_100k&quot;    &quot;hiv_aids_concurrent_num&quot;      
+##  [9] &quot;concurrent_hiv_aids_among_all&quot; &quot;aids_diagnoses_num&quot;           
+## [11] &quot;aids_diagnoses_num_per_100k&quot;</code></pre>
+<pre class="r"><code>colnames(nyc_HIV2)</code></pre>
+<pre><code>##  [1] &quot;year&quot;                          &quot;neighborhood&quot;                 
+##  [3] &quot;race&quot;                          &quot;age&quot;                          
+##  [5] &quot;hiv_diagnoses_num&quot;             &quot;hiv_diagnoses_num_per_100k&quot;   
+##  [7] &quot;hiv_aids_concurrent_num&quot;       &quot;concurrent_hiv_aids_among_all&quot;
+##  [9] &quot;aids_diagnoses_num&quot;            &quot;aids_diagnoses_num_per_100k&quot;  
+## [11] &quot;borough&quot;</code></pre>
+<pre class="r"><code>head(nyc_HIV1)</code></pre>
+<pre><code>## # A tibble: 6 × 11
+##    year borough neighborhood sex    race                      hiv_diagnoses_num
+##   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;                     &lt;chr&gt;            
+## 1  2021 All     All          All    &quot;All&quot;                     1592             
+## 2  2021 All     All          Female &quot;All&quot;                     286              
+## 3  2021 All     All          Male   &quot;All&quot;                     1306             
+## 4  2021 All     All          All    &quot;Asian/Pacific\nIslander&quot; 91               
+## 5  2021 All     All          Female &quot;Asian/Pacific\nIslander&quot; 9                
+## 6  2021 All     All          Male   &quot;Asian/Pacific\nIslander&quot; 82               
+## # ℹ 5 more variables: hiv_diagnoses_num_per_100k &lt;chr&gt;,
+## #   hiv_aids_concurrent_num &lt;dbl&gt;, concurrent_hiv_aids_among_all &lt;dbl&gt;,
+## #   aids_diagnoses_num &lt;dbl&gt;, aids_diagnoses_num_per_100k &lt;dbl&gt;</code></pre>
+<pre class="r"><code>library(ggplot2)
+All &lt;- nyc_HIV1 %&gt;% 
+  filter(sex == &quot;All&quot; &amp; race == &quot;All&quot; &amp; borough == &quot;All&quot;)
+
+Female &lt;- nyc_HIV1 %&gt;% 
+  filter(sex == &quot;Female&quot; &amp; borough == &quot;All&quot; &amp; race !=&quot;All&quot;)
+
+Male &lt;- nyc_HIV1 %&gt;% 
+  filter(sex == &quot;Male&quot;  &amp; borough == &quot;All&quot; &amp; race !=&quot;All&quot;)
+
+graph1 = bind_rows(Female, Male)
+
+nyc_HIV1$hiv_diagnoses_num &lt;- as.integer(nyc_HIV1$hiv_diagnoses_num)
+nyc_HIV2$hiv_diagnoses_num &lt;- as.integer(nyc_HIV2$hiv_diagnoses_num)
+
+ggplot(graph1, aes(x=race, y=hiv_diagnoses_num, fill=sex)) +
+  geom_bar(stat=&quot;identity&quot;, position=position_dodge()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = &quot;Race&quot;, y = &quot;Number of HIV/AIDS Diagnoses&quot;, fill = &quot;Sex&quot;)</code></pre>
+<p><img
+src="Data-Processing-and-Exploratory-analyses_files/figure-gfm/unnamed-chunk-4-1.png" /><!-- --></p>
+<pre class="r"><code># Graph Age 
+age_summary &lt;- nyc_HIV2 %&gt;%
+  filter(age != &quot;All&quot; &amp; race == &quot;All&quot; &amp; borough == &quot;All&quot;) %&gt;%
+  group_by(age) %&gt;%
+  summarise(total_hiv_diagnoses = sum(hiv_diagnoses_num))
+
+ggplot(age_summary, aes(x = age, y = total_hiv_diagnoses)) +
+  geom_bar(stat = &quot;identity&quot;, color = &quot;yellow&quot;, width = 0.7) +
+  labs(title = &quot;Total HIV Diagnoses by Age Group&quot;,
+       x = &quot;Age Group&quot;,
+       y = &quot;Total HIV Diagnoses&quot;) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img
+src="Data-Processing-and-Exploratory-analyses_files/figure-gfm/unnamed-chunk-4-2.png" /><!-- -->
+summary:</p>
+<p><strong>Show the map of NYC HIV service resources
+location.</strong></p>
+<pre class="r"><code>if (!require(leaflet)) install.packages(&#39;leaflet&#39;)
+library(leaflet)
+filtered_data = HIV_service[HIV_service$longitude != 0 &amp; HIV_service$latitude != 0,]
+# Create the map
+m &lt;- leaflet(filtered_data) %&gt;%
+  addProviderTiles(providers$OpenStreetMap) %&gt;%
+  addCircleMarkers(
+    ~longitude, ~latitude,
+    radius = 4,
+    popup = ~paste(&quot;&lt;strong&gt;Facility Name:&lt;/strong&gt;&quot;, facilityname,
+                   &quot;&lt;br&gt;&lt;strong&gt;Service Type:&lt;/strong&gt;&quot;, service_type,
+                   &quot;&lt;br&gt;&lt;strong&gt;Address:&lt;/strong&gt;&quot;, address,
+                   &quot;&lt;br&gt;&lt;strong&gt;Borough:&lt;/strong&gt;&quot;, borough,
+                   &quot;&lt;br&gt;&lt;strong&gt;Zip:&lt;/strong&gt;&quot;, zipcode)
+  )
+
+# Print the map
+print(m)</code></pre>
+<p>summary:</p>
+<p><strong>Show the distribution of the HIV/AIDS diagnoses by
+neighborhood.</strong></p>
+<pre class="r"><code>#work
+# I&#39;ll see if I can find the log&amp;lat for the neighborhoods
+diagnoses &lt;- nyc_HIV1 %&gt;% 
+  select(borough, hiv_diagnoses_num)
+
+# Plot bar chart
+ggplot(diagnoses, aes(x = reorder(borough, hiv_diagnoses_num), y = hiv_diagnoses_num)) +
+  geom_col() +
+  labs(x = &quot;Neighborhood&quot;,
+       y = &quot;Number of HIV Diagnoses&quot;,
+       title = &quot;HIV Diagnoses by Neighborhood&quot;) +
+  coord_flip()</code></pre>
+<pre><code>## Warning: Removed 5 rows containing missing values (`position_stack()`).</code></pre>
+<p><img
+src="Data-Processing-and-Exploratory-analyses_files/figure-gfm/unnamed-chunk-6-1.png" /><!-- -->
+summary:</p>
+<p><strong>Trend analysis:analyze the trend of the number of HIV/AIDS
+diagnoses over time.</strong></p>
+<pre class="r"><code>#work
+#work
+All &lt;- nyc_HIV1 %&gt;% 
+  filter(sex == &quot;All&quot; &amp; race == &quot;All&quot; &amp; borough == &quot;All&quot;)
+
+# Plot diagnoses over time
+ggplot(All, aes(x = year, y = hiv_diagnoses_num)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) + 
+  labs(
+    title = &quot;HIV Diagnoses Trend (All Sex)&quot;,
+    x = &quot;Year&quot;,
+    y = &quot;Number of Diagnoses&quot;
+  )</code></pre>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<p><img
+src="Data-Processing-and-Exploratory-analyses_files/figure-gfm/unnamed-chunk-7-1.png" /><!-- -->
+summary:</p>
+</div>
+<div id="exploratory-statistical-analyses." class="section level1">
+<h1>Exploratory statistical analyses.</h1>
+<p><strong>Correlation analysis:After the Visualizations is there any
+association between different variables such as neighborhood, age,
+gender, and race.</strong></p>
+<pre class="r"><code>#work</code></pre>
+<p>T-test /ANOVA: Compare differences in HIV between two or more groups
+( gender or racial). Chi-square test: Analyze associations between
+categorical variables (gender, race).</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
