@@ -67,8 +67,9 @@ HIV_service=
   select(unique_id,facilityname,service_type, address,borough,state,zipcode,latitude,longitude)
   
 ```
-**A short  clear description of where and how data were obtained. explain the variables means in the data**
-**Calculate the sum, mean, median, standard deviation of HIV/AIDS indicators** 
+**Data collected from the NYC open data**
+**(https://opendata.cityofnewyork.us/).The dataset includes information on newly diagnosed cases of HIV and AIDS in New York City from the years 2017 to 2020, reported case are stratified by neighborhood, age group,sex and race. The other data set shows the  information of HIV Service Facilities in nyc**
+
 ```{r}
 colnames(nyc_HIV1)
 colnames(nyc_HIV2)
@@ -114,10 +115,25 @@ graph1 = bind_rows(Female, Male)
 nyc_HIV1$hiv_diagnoses_num <- as.integer(nyc_HIV1$hiv_diagnoses_num)
 nyc_HIV2$hiv_diagnoses_num <- as.integer(nyc_HIV2$hiv_diagnoses_num)
 
+invisible({ggplot(graph1, aes(x=race, y=hiv_diagnoses_num, fill=sex)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = "Race", y = "Number of HIV/AIDS Diagnoses", fill = "Sex")})
+
+Female <- nyc_HIV1 %>% 
+  filter(sex == "Female" & borough == "All" & race !="All")
+
+Male <- nyc_HIV1 %>% 
+  filter(sex == "Male"  & borough == "All" & race !="All")
+
+graph1 = bind_rows(Female, Male)
+
 ggplot(graph1, aes(x=race, y=hiv_diagnoses_num, fill=sex)) +
   geom_bar(stat="identity", position=position_dodge()) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   labs(x = "Race", y = "Number of HIV/AIDS Diagnoses", fill = "Sex")
+
+
 
 # Graph Age 
 age_summary <- nyc_HIV2 %>%
@@ -227,6 +243,7 @@ print(anova2)
 summary:
 The ANOVA passed the test of significance indicating that there is a significant difference in the number of HIV in different age groups.
 
+
 **Test whether there is a significant difference between people of different races and different age groups.**
 ```{r}
 race_table <- table(nyc_HIV1$race, nyc_HIV1$sex)
@@ -250,7 +267,7 @@ nyc_HIV4<-nyc_HIV3[,-c(2,3,4,5,7,8,9,10,11,12,18,21)]
 model <- lm(hiv_diagnoses_num ~. , data = nyc_HIV4)
 summary(model)
 ```
-summary:
+**Summary:**
 The coefficients of all variables passed the significance test, indicating that all of these independent variables have a significant effect on hiv_diagnoses_num. The coefficient before the variable "boroughStaten\\\nIsIand" has the largest absolute value, which means that it has the largest effect on the number of HIV patients. In addition, the coefficients before these variables are all negative, indicating that they all negatively affect hiv_diagnoses_num.Finally, the multiple linear regression model constructed ishiv_diagnoses_num=4514.4981-2.0224*year-354.5227*boroughBronx-358.4969*boroughBrooklyn-362.8923*boroughManhattan-363.2155*boroughQueens-373.2117*boroughStaten\\nIsland-26.8822*sexFemale-6.1453*sexMale-62.6910*raceAsian /Pacific\\nIslander-36.4375*raceBlack-41.7176*raceLatino/Hispanic-65.3393*raceOther/Unknown-57.9514*raceWhite.
 
 #### Regression model test
@@ -269,6 +286,19 @@ plot(fitted_values, residuals,
 abline(h = 0, col = "red")
 ```
 
-**summary:Here is a test of the effectiveness of the regression model constructed above. Use plot(model) to draw residual plots, scatter plots and other diagnostic plots. Residual plots are used to check for linear properties, heteroskedasticity, outliers, etc. Scatter plots can be used to check for correlation between independent variables, and QQ plots are used to check whether the residuals conform to the assumption of normal distribution. Here, we can see that the residuals do not conform well to normality and randomness. Analyzing the reason, it may be due to the existence of individual outliers, which affects the distribution of the data and the distribution of the residuals, making them not conform to normality and randomness.**
+**Summary:Here is a test of the effectiveness of the regression model constructed above. Use plot(model) to draw residual plots, scatter plots and other diagnostic plots. Residual plots are used to check for linear properties, heteroskedasticity, outliers, etc. Scatter plots can be used to check for correlation between independent variables, and QQ plots are used to check whether the residuals conform to the assumption of normal distribution. Here, we can see that the residuals do not conform well to normality and randomness. Analyzing the reason, it may be due to the existence of individual outliers, which affects the distribution of the data and the distribution of the residuals, making them not conform to normality and randomness.**
 
-**if github md knit fail,change to the html output“**
+# Findings from the Analysis
+
+ * Gender and HIV Prevalence: There tends to be a difference in HIV infection rates and diagnosis numbers between males and females.In the analysis we conducted, it was found that the number of HIV diagnoses was significantly higher in males compared to females. 
+ * Ethnic Disparities in HIV Diagnoses: Our ANOVA tests revealed significant differences in HIV diagnoses among different races and age groups,emphasizing the persistence of inequities in HIV prevalence.
+ * Variation Across Boroughs: The linear regression analysis showed significant differences in HIV diagnoses among the boroughs of New York City. Boroughs like Staten Island exhibited the largest negative coefficients in the model, indicating a lower number of HIV diagnoses compared to other regions. The differences are possibly influenced by factors such as local public health policies, access to healthcare services, and community-level prevention efforts.
+ * Trends in HIV Infections: Our analysis indicated an 31% decrease in new HIV infections from 2017 to 2021, suggesting a gradual but steady progress in controlling new infections.
+ 
+## Insights and Reflections
+Our findings provide critical insights into the multifaceted nature of HIV epidemiology in New York City. The results underscore the necessity of addressing social and structural factors, such as racism, sexism, economic factors, homophobia, and transphobia. These determinants can influence risk behaviors, access to healthcare, and overall health outcomes.
+
+While some findings, such as the disparities in HIV diagnoses among different demographics, were expected, the impact of external factors like the COVID-19 pandemic on the patterns of HIV diagnoses was particularly intriguing. It highlights the dynamic nature of public health challenges and the need for adaptive and resilient healthcare systems.
+
+
+The insights gained from this analysis can aid in the development of more nuanced and effective public health strategies. These strategies should not only be responsive to the unique needs of different demographics but also adaptable to the specific challenges faced by each borough and race. By addressing these multifaceted aspects, New York City can continue to make progress towards reducing HIV infections and improving outcomes for people living with HIV.
