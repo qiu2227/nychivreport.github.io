@@ -1,64 +1,31 @@
 ---
-title: "Final Project"
-output: 
-  html_document:
-    toc: true
-    toc_float: true
-    code_folding: hide
+title: "Data Processing and Exploratory analyses"
+author: 
+  - "Jake W. Coldiron,"
+  - "Zixuan Qiu,"
+  - "Tianyuan Deng,"
+  - "Aung Nay Win,"
+  - "Yuqi Cheng"
+output: github_document
+always_allow_html: true
 ---
 
-### **New York City  HIV/AIDS Report**
-**A HIV Epidemiological report aimed to investigate the correlation between HIV infection and socioeconomic status, population distribution, and medical resources in New York City.**
+**Date:** 2023-11-10
 
-<center>
-<img src="images/hiv.png" style="width:75%" class="center">
-</center>
-
-
-### Motivation 
-  HIV/AIDS are still  a significant public health challenge,in 2020, there were 100,712 people living with HIV in New York City. The vast population diversity and economic disparities of New York City, provide a unique landscape for studying how socioeconomic status, population distribution, and medical resources intersect to influence HIV infection rates within the in a dense urban environment city.
-  The medical resource and economic status distribution often varies greatly across different boroughs and neighborhoods in nyc.Investigating how these disparities relate to HIV prevalence can shed light on the broader implications of socioeconomic on epidemiology and develop more targeted intervention strategies base on the different demographics condition. 
-
-
-### Screencast
-
-
-
-### Collaborators
-* Jake W. Coldiron(jwc2177)
-* Zixuan Qiu(qiu2227)
-* Tianyuan Deng(td2809)
-* Aung Nay Win(anw2158)
-* Yuqi Cheng(yc4382)
-
-
-### Data
-To prepare the data analysis, we load these following libraries:
-
-* `tidyverse`
-* `rvest`
-* `httr`
-* `plotly`
-* `ggplot2`
-* `leaflet`
-* `caret`
-
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE}
 library(tidyverse)
 library(rvest)
 library(httr)
 library(plotly)
-library(ggplot2)
-library(leaflet)
-library(caret)
+library(broom)
+library(modelr)
+library(maps)
 ```
 
 # Data processing
 
-The datasets used in this study were sourced from the NYC OpenData portal, a public platform offering diverse datasets from New York City agencies. We utilized the R programming language, employing the `httr` package to perform HTTP GET requests for retrieving the data. Specifically, two datasets, `nyc_HIV1` and `nyc_HIV2`, were accessed from distinct URLs with set record limits of 10,000 and 22,000 respectively. These datasets, containing information on HIV statistics, were parsed and filtered to include data from the year 2017 onwards. Additionally, a dataset for HIV service resources, `HIV_service`, was similarly obtained with a record limit of 1,000. This dataset was processed to select critical columns like facility information and geographical coordinates. This process ensured a comprehensive and tailored extraction of data pertinent to our analysis of HIV trends and resources in New York City.
-
-We input the New York HIV data from NYC opendata 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE}
+#input the New York HIV data from NYC opendata 
 nyc_HIV1=
   GET("https://data.cityofnewyork.us/resource/ykvb-493p.csv",
   query = list("$limit" = 10000)) |>
@@ -74,8 +41,8 @@ nyc_HIV2=
   
 ```
 
-And input HIV service resource data
 ```{r message=FALSE}
+#HIV service resource 
 HIV_service=
   GET("https://data.cityofnewyork.us/resource/pwts-g83w.csv",
   query = list("$limit" = 1000)) |>
@@ -83,42 +50,27 @@ HIV_service=
   select(unique_id,facilityname,service_type, address,borough,state,zipcode,latitude,longitude)
   
 ```
+**A short  clear description of where and how data were obtained. explain the variables means in the data**
 **Calculate the sum, mean, median, standard deviation of HIV/AIDS indicators** 
-```{r}
-colnames(nyc_HIV1)
-colnames(nyc_HIV2)
-colnames(HIV_service)
-```
-Varialbes in the nyc_HIV1 and nyc_HIV2 Dataset
 
-* `year`: The year of data recording.
-* `borough`: The borough in New York City.
-* `neighbourhood`: The specific neighbourhood.
-* `sex`: Gender of individuals.
-* `race`: Racial category.
-* `age`: Age of individuals.
-* `hiv_diagnoses_num`: The number of new HIV diagnoses.
-* `hiv_diagnoses_num_per_100k`: The rate of new HIV diagnoses per 100,000 population.
-* `hiv_aids_concurrent_num`: The number of people diagnosed with both HIV and AIDS concurrently.
-* `concurrent_hiv_aids_among_all`: The proportion of HIV diagnoses that are concurrent with an AIDS diagnosis.
-* `aids_diagnoses_num`: The number of new AIDS diagnoses.
-* `aids_diagnoses_num_per_100k`: The rate of new AIDS diagnoses per 100,000 population.
-
-Variables in the HIV_service datasets
-
-* `unique_id`: Identifier for the service resource.
-* `facilityname`: Name of the facility offering HIV services.
-* `service_type`: Type of service provided.
-* `address`, `borough`, `state`, `zipcode`: Address details of the facility.
-* `latitude`, `longitude`: Geographical coordinates.
 
 # Visualizations
-## **Number of HIV/AIDS diagnoses by race, sex, and age group.**
+
+**Shows the number of HIV/AIDS diagnoses by race, sex, and age group.**
 ```{r}
-Female <- nyc_HIV1 |> 
+#work
+#work
+colnames(nyc_HIV1)
+colnames(nyc_HIV2)
+head(nyc_HIV1)
+library(ggplot2)
+All <- nyc_HIV1 %>% 
+  filter(sex == "All" & race == "All" & borough == "All")
+
+Female <- nyc_HIV1 %>% 
   filter(sex == "Female" & borough == "All" & race !="All")
 
-Male <- nyc_HIV1 |> 
+Male <- nyc_HIV1 %>% 
   filter(sex == "Male"  & borough == "All" & race !="All")
 
 graph1 = bind_rows(Female, Male)
@@ -126,52 +78,36 @@ graph1 = bind_rows(Female, Male)
 nyc_HIV1$hiv_diagnoses_num <- as.integer(nyc_HIV1$hiv_diagnoses_num)
 nyc_HIV2$hiv_diagnoses_num <- as.integer(nyc_HIV2$hiv_diagnoses_num)
 
-age_summary <- nyc_HIV2 |> 
-  filter(age != "All" & race == "All" & borough == "All") |> 
-  group_by(age) |> 
-  summarise(total_hiv_diagnoses = sum(hiv_diagnoses_num))
+ggplot(graph1, aes(x=race, y=hiv_diagnoses_num, fill=sex)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = "Race", y = "Number of HIV/AIDS Diagnoses", fill = "Sex")
+
 # Graph Age 
+age_summary <- nyc_HIV2 %>%
+  filter(age != "All" & race == "All" & borough == "All") %>%
+  group_by(age) %>%
+  summarise(total_hiv_diagnoses = sum(hiv_diagnoses_num))
+
 ggplot(age_summary, aes(x = age, y = total_hiv_diagnoses)) +
   geom_bar(stat = "identity", color = "yellow", width = 0.7) +
   labs(title = "Total HIV Diagnoses by Age Group",
        x = "Age Group",
        y = "Total HIV Diagnoses") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-invisible({ggplot(graph1, aes(x=race, y=hiv_diagnoses_num, fill=sex)) +
-  geom_bar(stat="identity", position=position_dodge()) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  labs(x = "Race", y = "Number of HIV/AIDS Diagnoses", fill = "Sex")})
-
-Female <- nyc_HIV1 |> 
-  filter(sex == "Female" & borough == "All" & race !="All")
-
-Male <- nyc_HIV1 |> 
-  filter(sex == "Male"  & borough == "All" & race !="All")
-
-graph1 = bind_rows(Female, Male)
-
-ggplot(graph1, aes(x=race, y=hiv_diagnoses_num, fill=sex)) +
-  geom_bar(stat="identity", position=position_dodge()) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  labs(x = "Race", y = "Number of HIV/AIDS Diagnoses", fill = "Sex")
-
-
-All <- nyc_HIV1 %>% 
-  filter(sex == "All" & race == "All" & borough == "All")
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  geom_text(aes(label=total_hiv_diagnoses), vjust=-0.5, color="black", size=3.5)
 ```
-
 summary:
 Both the nyc_HIV1 dataset and the nyc_HIV1 data have 11 variables, nyc_HIV1 is the data related to the number of patients with HIV by gender and nyc_HIV2 is the data related to the number of patients with HIV by age. When analyzing the number of HIV patients by race, the results show that Latino/Hispanic races are used for high prevalence and there are more males than females. When analyzing the number of HIV patients by age group, the results showed that 20-29 year olds had the highest number of total diagnoses and 13-19 year olds had the lowest number of diagnoses.
 
-## **The map of NYC HIV service resources location.**
+**Show the map of NYC HIV service resources location.**
 ```{r}
 if (!require(leaflet)) install.packages('leaflet')
 library(leaflet)
 filtered_data = HIV_service[HIV_service$longitude != 0 & HIV_service$latitude != 0,]
-
- leaflet(filtered_data) %>%
+# Create the map
+m <- leaflet(filtered_data) %>%
   addProviderTiles(providers$OpenStreetMap) %>%
   addCircleMarkers(
     ~longitude, ~latitude,
@@ -183,13 +119,14 @@ filtered_data = HIV_service[HIV_service$longitude != 0 & HIV_service$latitude !=
                    "<br><strong>Zip:</strong>", zipcode)
   )
 
+# Print the map
+print(m)
 ```
-
 summary:
 Here, an interactive map was created using the leaflet package to visualize the distribution of HIV service facilities and detailed information to help better understand the allocation of resources for HIV prevention and treatment.
 
-## **Distribution of the HIV/AIDS diagnoses by neighborhood.** 
-```{r warning=FALSE}
+**Show the distribution of the HIV/AIDS diagnoses by neighborhood.** 
+```{r}
 #work
 # I'll see if I can find the log&lat for the neighborhoods
 diagnoses <- nyc_HIV1 %>% 
@@ -201,14 +138,44 @@ ggplot(diagnoses, aes(x = reorder(borough, hiv_diagnoses_num), y = hiv_diagnoses
   labs(x = "Neighborhood",
        y = "Number of HIV Diagnoses",
        title = "HIV Diagnoses by Neighborhood") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   coord_flip()
 ```
-
+```{r}
+filtered_data = HIV_service[HIV_service$longitude != 0 & HIV_service$latitude != 0,]
+# Create the map
+m <- leaflet(filtered_data) %>%
+  addTiles("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}") %>%
+  addCircleMarkers(
+    ~longitude, ~latitude,
+    radius = 4,
+    popup = ~paste("<strong>Facility Name:</strong>", facilityname,
+                   "<br><strong>Service Type:</strong>", service_type,
+                   "<br><strong>Address:</strong>", address,
+                   "<br><strong>Borough:</strong>", borough,
+                   "<br><strong>Zip:</strong>", zipcode)
+  )
+m <- m %>% addCircleMarkers(
+  radius = sqrt(nyc_HIV1$hiv_diagnoses_num),
+  fillOpacity = 0.4,
+  color = "orange",
+  stroke = TRUE,
+  label = sprintf("HIV Diagnoses: %s", nyc_HIV1$hiv_diagnoses_num),
+  labelOptions = labelOptions(
+    textOnly = TRUE,
+    direction = "auto"
+  )
+)
+m
+```
 summary:
 The number of HIV cases varies by community, with the Staten Island community having a much smaller number of confirmed cases, the Brooklyn community having a larger number of confirmed cases, and the other communities having a similar number of cases.
 
-## **Trend analysis:analyze the trend of the number of HIV/AIDS diagnoses over time.**
+
+**Trend analysis:analyze the trend of the number of HIV/AIDS diagnoses over time.**
 ```{r}
+#work
 All <- nyc_HIV1 %>% 
   filter(sex == "All" & race == "All" & borough == "All")
 
@@ -222,25 +189,21 @@ ggplot(All, aes(x = year, y = hiv_diagnoses_num)) +
     y = "Number of Diagnoses"
   )
 ```
-
 summary:
 The number of patients diagnosed in different years showed significant differences. The overall trend is decreasing from year to year. This also reflects the growing importance that has been placed on HIV.
 
-# Exploratory statistical analyses
+
+
+# Exploratory statistical analyses.
 **Correlation analysis:After the Visualizations is there any association between different variables such as neighborhood, age, gender, and race.**
 
 **T-test for HPV prevalence in gender-specific populations.**
 ```{r}
-nyc_HIV1$hiv_diagnoses_num <- as.numeric(nyc_HIV1$hiv_diagnoses_num)
-
-# Extracting data for females and males
-female_data <- na.omit(nyc_HIV1[nyc_HIV1$sex == "Female",]$hiv_diagnoses_num)
-male_data <- na.omit(nyc_HIV1[nyc_HIV1$sex == "Male",]$hiv_diagnoses_num)
-
-# Perform T-test
+female_data <- nyc_HIV1[nyc_HIV1$sex == "Female",]$hiv_diagnoses_num
+male_data <- nyc_HIV1[nyc_HIV1$sex == "Male",]$hiv_diagnoses_num
+# Perform T test
 t.test(female_data, male_data)
 ```
-
 summary:
 The t-test passed the test of significance indicating that there was a significant difference in the number of males and females with HIV.
 
@@ -249,7 +212,6 @@ The t-test passed the test of significance indicating that there was a significa
 anova1 <- anova(lm(hiv_diagnoses_num ~ race, data = nyc_HIV1))
 print(anova1)
 ```
-
 summary:
 The ANOVA passed the test of significance, indicating that there is indeed a significant difference in the number of people of different races who have HIV.
 
@@ -258,7 +220,6 @@ The ANOVA passed the test of significance, indicating that there is indeed a sig
 anova2 <- anova(lm(hiv_diagnoses_num ~ age, data = nyc_HIV2))
 print(anova2)
 ```
-
 summary:
 The ANOVA passed the test of significance indicating that there is a significant difference in the number of HIV in different age groups.
 
@@ -269,11 +230,10 @@ race_table
 # Perform chi-square test
 chisq.test(race_table)
 ```
-
 summary:
 The chi-square test passes the test of significance, indicating that there is a significant relationship between race and gender.
 
-## Linear regression analysis
+# linear regression analysis
 ```{r}
 # Defining a Unique Thermal Coding Processor
 library(caret)
@@ -286,11 +246,10 @@ nyc_HIV4<-nyc_HIV3[,-c(2,3,4,5,7,8,9,10,11,12,18,21)]
 model <- lm(hiv_diagnoses_num ~. , data = nyc_HIV4)
 summary(model)
 ```
-
 summary:
 The coefficients of all variables passed the significance test, indicating that all of these independent variables have a significant effect on hiv_diagnoses_num. The coefficient before the variable "boroughStaten\\\nIsIand" has the largest absolute value, which means that it has the largest effect on the number of HIV patients. In addition, the coefficients before these variables are all negative, indicating that they all negatively affect hiv_diagnoses_num.Finally, the multiple linear regression model constructed ishiv_diagnoses_num=4514.4981-2.0224*year-354.5227*boroughBronx-358.4969*boroughBrooklyn-362.8923*boroughManhattan-363.2155*boroughQueens-373.2117*boroughStaten\\nIsland-26.8822*sexFemale-6.1453*sexMale-62.6910*raceAsian /Pacific\\nIslander-36.4375*raceBlack-41.7176*raceLatino/Hispanic-65.3393*raceOther/Unknown-57.9514*raceWhite.
 
-## Regression model test
+# Regression model test
 ```{r}
 #Drawing demonstration
 par(mfrow=c(2, 2))  
@@ -343,3 +302,4 @@ While some findings, such as the disparities in HIV diagnoses among different de
 
 
 The insights gained from this analysis can aid in the development of more nuanced and effective public health strategies. These strategies should not only be responsive to the unique needs of different demographics but also adaptable to the specific challenges faced by each borough and race. By addressing these multifaceted aspects, New York City can continue to make progress towards reducing HIV infections and improving outcomes for people living with HIV.
+

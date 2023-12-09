@@ -342,11 +342,21 @@ div.tocify {
      
   </a>
 </li>
-<li>
-  <a href="https://github.com/JakeWColdiron/p8105_final_project/">
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     <span class="fa fa-github fa-lg"></span>
      
+     
+    <span class="caret"></span>
   </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="https://github.com/JakeWColdiron/p8105_final_project/">Data Cleaning Repository</a>
+    </li>
+    <li>
+      <a href="https://github.com/AungNWin/nychivreport.github.io">Website Repository</a>
+    </li>
+  </ul>
 </li>
       </ul>
     </div><!--/.nav-collapse -->
@@ -374,13 +384,10 @@ div.tocify {
 class="section level2">
 <h2><strong>Number of HIV/AIDS diagnoses by race, sex, and age
 group</strong></h2>
-<pre class="r"><code>All &lt;- nyc_HIV1 %&gt;% 
-  filter(sex == &quot;All&quot; &amp; race == &quot;All&quot; &amp; borough == &quot;All&quot;)
-
-Female &lt;- nyc_HIV1 %&gt;% 
+<pre class="r"><code>Female &lt;- nyc_HIV1 |&gt; 
   filter(sex == &quot;Female&quot; &amp; borough == &quot;All&quot; &amp; race !=&quot;All&quot;)
 
-Male &lt;- nyc_HIV1 %&gt;% 
+Male &lt;- nyc_HIV1 |&gt; 
   filter(sex == &quot;Male&quot;  &amp; borough == &quot;All&quot; &amp; race !=&quot;All&quot;)
 
 graph1 = bind_rows(Female, Male)
@@ -388,17 +395,11 @@ graph1 = bind_rows(Female, Male)
 nyc_HIV1$hiv_diagnoses_num &lt;- as.integer(nyc_HIV1$hiv_diagnoses_num)
 nyc_HIV2$hiv_diagnoses_num &lt;- as.integer(nyc_HIV2$hiv_diagnoses_num)
 
-ggplot(graph1, aes(x=race, y=hiv_diagnoses_num, fill=sex)) +
-  geom_bar(stat=&quot;identity&quot;, position=position_dodge()) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  labs(x = &quot;Race&quot;, y = &quot;Number of HIV/AIDS Diagnoses&quot;, fill = &quot;Sex&quot;)</code></pre>
-<p><img src="data_visualization_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<pre class="r"><code># Graph Age 
-age_summary &lt;- nyc_HIV2 %&gt;%
-  filter(age != &quot;All&quot; &amp; race == &quot;All&quot; &amp; borough == &quot;All&quot;) %&gt;%
-  group_by(age) %&gt;%
+age_summary &lt;- nyc_HIV2 |&gt; 
+  filter(age != &quot;All&quot; &amp; race == &quot;All&quot; &amp; borough == &quot;All&quot;) |&gt; 
+  group_by(age) |&gt; 
   summarise(total_hiv_diagnoses = sum(hiv_diagnoses_num))
-
+# Graph Age 
 ggplot(age_summary, aes(x = age, y = total_hiv_diagnoses)) +
   geom_bar(stat = &quot;identity&quot;, color = &quot;yellow&quot;, width = 0.7) +
   labs(title = &quot;Total HIV Diagnoses by Age Group&quot;,
@@ -406,8 +407,36 @@ ggplot(age_summary, aes(x = age, y = total_hiv_diagnoses)) +
        y = &quot;Total HIV Diagnoses&quot;) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="data_visualization_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>invisible({ggplot(graph1, aes(x=race, y=hiv_diagnoses_num, fill=sex)) +
+  geom_bar(stat=&quot;identity&quot;, position=position_dodge()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = &quot;Race&quot;, y = &quot;Number of HIV/AIDS Diagnoses&quot;, fill = &quot;Sex&quot;)})
+
+Female &lt;- nyc_HIV1 |&gt; 
+  filter(sex == &quot;Female&quot; &amp; borough == &quot;All&quot; &amp; race !=&quot;All&quot;)
+
+Male &lt;- nyc_HIV1 |&gt; 
+  filter(sex == &quot;Male&quot;  &amp; borough == &quot;All&quot; &amp; race !=&quot;All&quot;)
+
+graph1 = bind_rows(Female, Male)
+
+ggplot(graph1, aes(x=race, y=hiv_diagnoses_num, fill=sex)) +
+  geom_bar(stat=&quot;identity&quot;, position=position_dodge()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = &quot;Race&quot;, y = &quot;Number of HIV/AIDS Diagnoses&quot;, fill = &quot;Sex&quot;)</code></pre>
 <p><img src="data_visualization_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
-<p>summary:</p>
+<pre class="r"><code>All &lt;- nyc_HIV1 %&gt;% 
+  filter(sex == &quot;All&quot; &amp; race == &quot;All&quot; &amp; borough == &quot;All&quot;)</code></pre>
+<p>summary: Both the nyc_HIV1 dataset and the nyc_HIV1 data have 11
+variables, nyc_HIV1 is the data related to the number of patients with
+HIV by gender and nyc_HIV2 is the data related to the number of patients
+with HIV by age. When analyzing the number of HIV patients by race, the
+results show that Latino/Hispanic races are used for high prevalence and
+there are more males than females. When analyzing the number of HIV
+patients by age group, the results showed that 20-29 year olds had the
+highest number of total diagnoses and 13-19 year olds had the lowest
+number of diagnoses.</p>
 </div>
 <div id="distribution-of-the-hivaids-diagnoses-by-neighborhood"
 class="section level2">
@@ -426,7 +455,10 @@ ggplot(diagnoses, aes(x = reorder(borough, hiv_diagnoses_num), y = hiv_diagnoses
        title = &quot;HIV Diagnoses by Neighborhood&quot;) +
   coord_flip()</code></pre>
 <p><img src="data_visualization_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>summary:</p>
+<p>summary: The number of HIV cases varies by community, with the Staten
+Island community having a much smaller number of confirmed cases, the
+Brooklyn community having a larger number of confirmed cases, and the
+other communities having a similar number of cases.</p>
 </div>
 <div
 id="trend-analysisanalyze-the-trend-of-the-number-of-hivaids-diagnoses-over-time"
@@ -448,7 +480,10 @@ ggplot(All, aes(x = year, y = hiv_diagnoses_num)) +
     y = &quot;Number of Diagnoses&quot;
   )</code></pre>
 <p><img src="data_visualization_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<p>summary:</p>
+<p>summary: The number of patients diagnosed in different years showed
+significant differences. The overall trend is decreasing from year to
+year. This also reflects the growing importance that has been placed on
+HIV.</p>
 </div>
 
 

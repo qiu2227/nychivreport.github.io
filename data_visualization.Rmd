@@ -41,13 +41,10 @@ head(nyc_HIV1)
 
 ## **Number of HIV/AIDS diagnoses by race, sex, and age group**
 ```{r}
-All <- nyc_HIV1 %>% 
-  filter(sex == "All" & race == "All" & borough == "All")
-
-Female <- nyc_HIV1 %>% 
+Female <- nyc_HIV1 |> 
   filter(sex == "Female" & borough == "All" & race !="All")
 
-Male <- nyc_HIV1 %>% 
+Male <- nyc_HIV1 |> 
   filter(sex == "Male"  & borough == "All" & race !="All")
 
 graph1 = bind_rows(Female, Male)
@@ -55,17 +52,11 @@ graph1 = bind_rows(Female, Male)
 nyc_HIV1$hiv_diagnoses_num <- as.integer(nyc_HIV1$hiv_diagnoses_num)
 nyc_HIV2$hiv_diagnoses_num <- as.integer(nyc_HIV2$hiv_diagnoses_num)
 
-ggplot(graph1, aes(x=race, y=hiv_diagnoses_num, fill=sex)) +
-  geom_bar(stat="identity", position=position_dodge()) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  labs(x = "Race", y = "Number of HIV/AIDS Diagnoses", fill = "Sex")
-
-# Graph Age 
-age_summary <- nyc_HIV2 %>%
-  filter(age != "All" & race == "All" & borough == "All") %>%
-  group_by(age) %>%
+age_summary <- nyc_HIV2 |> 
+  filter(age != "All" & race == "All" & borough == "All") |> 
+  group_by(age) |> 
   summarise(total_hiv_diagnoses = sum(hiv_diagnoses_num))
-
+# Graph Age 
 ggplot(age_summary, aes(x = age, y = total_hiv_diagnoses)) +
   geom_bar(stat = "identity", color = "yellow", width = 0.7) +
   labs(title = "Total HIV Diagnoses by Age Group",
@@ -73,9 +64,32 @@ ggplot(age_summary, aes(x = age, y = total_hiv_diagnoses)) +
        y = "Total HIV Diagnoses") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+invisible({ggplot(graph1, aes(x=race, y=hiv_diagnoses_num, fill=sex)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = "Race", y = "Number of HIV/AIDS Diagnoses", fill = "Sex")})
+
+Female <- nyc_HIV1 |> 
+  filter(sex == "Female" & borough == "All" & race !="All")
+
+Male <- nyc_HIV1 |> 
+  filter(sex == "Male"  & borough == "All" & race !="All")
+
+graph1 = bind_rows(Female, Male)
+
+ggplot(graph1, aes(x=race, y=hiv_diagnoses_num, fill=sex)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = "Race", y = "Number of HIV/AIDS Diagnoses", fill = "Sex")
+
+
+All <- nyc_HIV1 %>% 
+  filter(sex == "All" & race == "All" & borough == "All")
 ```
 
 summary:
+Both the nyc_HIV1 dataset and the nyc_HIV1 data have 11 variables, nyc_HIV1 is the data related to the number of patients with HIV by gender and nyc_HIV2 is the data related to the number of patients with HIV by age. When analyzing the number of HIV patients by race, the results show that Latino/Hispanic races are used for high prevalence and there are more males than females. When analyzing the number of HIV patients by age group, the results showed that 20-29 year olds had the highest number of total diagnoses and 13-19 year olds had the lowest number of diagnoses.
 
 ## **Distribution of the HIV/AIDS diagnoses by neighborhood**
 ```{r warning=FALSE}
@@ -94,6 +108,7 @@ ggplot(diagnoses, aes(x = reorder(borough, hiv_diagnoses_num), y = hiv_diagnoses
 ```
 
 summary:
+The number of HIV cases varies by community, with the Staten Island community having a much smaller number of confirmed cases, the Brooklyn community having a larger number of confirmed cases, and the other communities having a similar number of cases.
 
 ## **Trend analysis:analyze the trend of the number of HIV/AIDS diagnoses over time**
 ```{r message=FALSE}
@@ -114,3 +129,4 @@ ggplot(All, aes(x = year, y = hiv_diagnoses_num)) +
 ```
 
 summary:
+The number of patients diagnosed in different years showed significant differences. The overall trend is decreasing from year to year. This also reflects the growing importance that has been placed on HIV.

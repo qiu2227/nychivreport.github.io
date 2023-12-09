@@ -41,4 +41,6 @@ leaflet(filtered_data) %>%
 ```
 
 summary:
+Here, an interactive map was created using the leaflet package to visualize the distribution of HIV service facilities and detailed information to help better understand the allocation of resources for HIV prevention and treatment.
+
 
