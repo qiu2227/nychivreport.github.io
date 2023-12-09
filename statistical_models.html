@@ -380,8 +380,6 @@ div.tocify {
 </div>
 
 
-<div id="exploratory-statistical-analyses." class="section level1">
-<h1>Exploratory statistical analyses.</h1>
 <p><strong>Correlation analysis:After the Visualizations is there any
 association between different variables such as neighborhood, age,
 gender, and race.</strong></p>
@@ -406,9 +404,9 @@ t.test(female_data, male_data)</code></pre>
 ## sample estimates:
 ## mean of x mean of y 
 ##  6.138889 26.938515</code></pre>
-<p>summary: The t-test passed the test of significance indicating that
-there was a significant difference in the number of males and females
-with HIV.</p>
+<p>The t-test passed the test of significance indicating that there was
+a significant difference in the number of males and females with
+HIV.</p>
 <p><strong>Test whether “hiv_diagnoses_num” is significantly different
 across ethnicities.</strong></p>
 <pre class="r"><code>anova1 &lt;- anova(lm(hiv_diagnoses_num ~ race, data = nyc_HIV1))
@@ -421,9 +419,9 @@ print(anova1)</code></pre>
 ## Residuals 5173 44906405    8681                      
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<p>summary: The ANOVA passed the test of significance, indicating that
-there is indeed a significant difference in the number of people of
-different races who have HIV.</p>
+<p>The ANOVA passed the test of significance, indicating that there is
+indeed a significant difference in the number of people of different
+races who have HIV.</p>
 <p><strong>Test whether “hiv_diagnoses_num” is significantly different
 between age groups.</strong></p>
 <pre class="r"><code>anova2 &lt;- anova(lm(hiv_diagnoses_num ~ age, data = nyc_HIV2))
@@ -436,9 +434,8 @@ print(anova2)</code></pre>
 ## Residuals 10569 25729234    2434                      
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<p>summary: The ANOVA passed the test of significance indicating that
-there is a significant difference in the number of HIV in different age
-groups.</p>
+<p>The ANOVA passed the test of significance indicating that there is a
+significant difference in the number of HIV in different age groups.</p>
 <p><strong>Test whether there is a significant difference between people
 of different races and different age groups.</strong></p>
 <pre class="r"><code>race_table &lt;- table(nyc_HIV1$race, nyc_HIV1$sex)
@@ -458,10 +455,8 @@ chisq.test(race_table)</code></pre>
 ## 
 ## data:  race_table
 ## X-squared = 0, df = 10, p-value = 1</code></pre>
-<p>summary: The chi-square test passes the test of significance,
-indicating that there is a significant relationship between race and
-gender.</p>
-</div>
+<p>The chi-square test passes the test of significance, indicating that
+there is a significant relationship between race and gender.</p>
 <div id="linear-regression-analysis" class="section level1">
 <h1>Linear regression analysis</h1>
 <pre class="r"><code># Defining a Unique Thermal Coding Processor
@@ -541,17 +536,17 @@ plot(fitted_values, residuals,
      main = &quot;Residuals vs. Fitted&quot;)
 abline(h = 0, col = &quot;red&quot;)</code></pre>
 <p><img src="statistical_models_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
-<p><strong>summary:Here is a test of the effectiveness of the regression
-model constructed above. Use plot(model) to draw residual plots, scatter
-plots and other diagnostic plots. Residual plots are used to check for
-linear properties, heteroskedasticity, outliers, etc. Scatter plots can
-be used to check for correlation between independent variables, and QQ
-plots are used to check whether the residuals conform to the assumption
-of normal distribution. Here, we can see that the residuals do not
-conform well to normality and randomness. Analyzing the reason, it may
-be due to the existence of individual outliers, which affects the
-distribution of the data and the distribution of the residuals, making
-them not conform to normality and randomness.</strong></p>
+<p><strong>Here is a test of the effectiveness of the regression model
+constructed above. We used plot to draw residual plots, scatter plots
+and other diagnostic plots. Residual plots are used to check for linear
+properties, heteroskedasticity, outliers, etc. Scatter plots were used
+to check for correlation between independent variables, and QQ plots
+were used to check whether the residuals conform to the assumption of
+normal distribution. Here, we can see that the residuals do not conform
+well to normality and randomness. Analyzing the reason, it may be due to
+the existence of individual outliers, which affects the distribution of
+the data and the distribution of the residuals, making them not conform
+to normality and randomness.</strong></p>
 </div>
 
 

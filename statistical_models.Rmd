@@ -40,7 +40,6 @@ colnames(nyc_HIV2)
 head(nyc_HIV1)
 ```
 
-# Exploratory statistical analyses.
 **Correlation analysis:After the Visualizations is there any association between different variables such as neighborhood, age, gender, and race.**
 
 **T-test for HPV prevalence in gender-specific populations.**
@@ -54,7 +53,7 @@ male_data <- na.omit(nyc_HIV1[nyc_HIV1$sex == "Male",]$hiv_diagnoses_num)
 # Perform T-test
 t.test(female_data, male_data)
 ```
-summary:
+
 The t-test passed the test of significance indicating that there was a significant difference in the number of males and females with HIV.
 
 **Test whether "hiv_diagnoses_num" is significantly different across ethnicities.**
@@ -62,7 +61,7 @@ The t-test passed the test of significance indicating that there was a significa
 anova1 <- anova(lm(hiv_diagnoses_num ~ race, data = nyc_HIV1))
 print(anova1)
 ```
-summary:
+
 The ANOVA passed the test of significance, indicating that there is indeed a significant difference in the number of people of different races who have HIV.
 
 **Test whether "hiv_diagnoses_num" is significantly different between age groups.**
@@ -70,7 +69,7 @@ The ANOVA passed the test of significance, indicating that there is indeed a sig
 anova2 <- anova(lm(hiv_diagnoses_num ~ age, data = nyc_HIV2))
 print(anova2)
 ```
-summary:
+
 The ANOVA passed the test of significance indicating that there is a significant difference in the number of HIV in different age groups.
 
 **Test whether there is a significant difference between people of different races and different age groups.**
@@ -80,7 +79,7 @@ race_table
 # Perform chi-square test
 chisq.test(race_table)
 ```
-summary:
+
 The chi-square test passes the test of significance, indicating that there is a significant relationship between race and gender.
 
 # Linear regression analysis
@@ -96,6 +95,7 @@ nyc_HIV4<-nyc_HIV3[,-c(2,3,4,5,7,8,9,10,11,12,18,21)]
 model <- lm(hiv_diagnoses_num ~. , data = nyc_HIV4)
 summary(model)
 ```
+
 The coefficients of all variables passed the significance test, indicating that all of these independent variables have a significant effect on hiv_diagnoses_num. The coefficient before the variable "boroughStaten\\\nIsIand" has the largest absolute value, which means that it has the largest effect on the number of HIV patients. In addition, the coefficients before these variables are all negative, indicating that they all negatively affect hiv_diagnoses_num.Finally, the multiple linear regression model constructed ishiv_diagnoses_num=4514.4981-2.0224*year-354.5227*boroughBronx-358.4969*boroughBrooklyn-362.8923*boroughManhattan-363.2155*boroughQueens-373.2117*boroughStaten\\nIsland-26.8822*sexFemale-6.1453*sexMale-62.6910*raceAsian /Pacific\\nIslander-36.4375*raceBlack-41.7176*raceLatino/Hispanic-65.3393*raceOther/Unknown-57.9514*raceWhite.
 
 # Regression model test
@@ -114,5 +114,5 @@ plot(fitted_values, residuals,
 abline(h = 0, col = "red")
 ```
 
-**summary:Here is a test of the effectiveness of the regression model constructed above. Use plot(model) to draw residual plots, scatter plots and other diagnostic plots. Residual plots are used to check for linear properties, heteroskedasticity, outliers, etc. Scatter plots can be used to check for correlation between independent variables, and QQ plots are used to check whether the residuals conform to the assumption of normal distribution. Here, we can see that the residuals do not conform well to normality and randomness. Analyzing the reason, it may be due to the existence of individual outliers, which affects the distribution of the data and the distribution of the residuals, making them not conform to normality and randomness.**
+**Here is a test of the effectiveness of the regression model constructed above. We used plot to draw residual plots, scatter plots and other diagnostic plots. Residual plots are used to check for linear properties, heteroskedasticity, outliers, etc. Scatter plots were used to check for correlation between independent variables, and QQ plots were used to check whether the residuals conform to the assumption of normal distribution. Here, we can see that the residuals do not conform well to normality and randomness. Analyzing the reason, it may be due to the existence of individual outliers, which affects the distribution of the data and the distribution of the residuals, making them not conform to normality and randomness.**
 
