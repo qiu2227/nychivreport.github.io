@@ -465,8 +465,18 @@ gender.</p>
 <div id="linear-regression-analysis" class="section level1">
 <h1>Linear regression analysis</h1>
 <pre class="r"><code># Defining a Unique Thermal Coding Processor
-library(caret)
-encoder &lt;- dummyVars(~ borough + sex + race, data = nyc_HIV1)
+library(caret)</code></pre>
+<pre><code>## Warning: package &#39;caret&#39; was built under R version 4.3.2</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## 
+## Attaching package: &#39;caret&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:httr&#39;:
+## 
+##     progress</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     lift</code></pre>
+<pre class="r"><code>encoder &lt;- dummyVars(~ borough + sex + race, data = nyc_HIV1)
 # Solo thermal coding of data
 encoded_data &lt;- predict(encoder, newdata = nyc_HIV1)
 # Merging the coded and original data sets
@@ -505,14 +515,14 @@ summary(model)</code></pre>
 ##   (5 observations deleted due to missingness)
 ## Multiple R-squared:  0.3635, Adjusted R-squared:  0.3619 
 ## F-statistic: 226.9 on 13 and 5165 DF,  p-value: &lt; 2.2e-16</code></pre>
-<p>summary: The coefficients of all variables passed the significance
-test, indicating that all of these independent variables have a
-significant effect on hiv_diagnoses_num. The coefficient before the
-variable “boroughStaten\” has the largest absolute value, which means
-that it has the largest effect on the number of HIV patients. In
-addition, the coefficients before these variables are all negative,
-indicating that they all negatively affect hiv_diagnoses_num.Finally,
-the multiple linear regression model constructed
+<p>The coefficients of all variables passed the significance test,
+indicating that all of these independent variables have a significant
+effect on hiv_diagnoses_num. The coefficient before the variable
+“boroughStaten\” has the largest absolute value, which means that it has
+the largest effect on the number of HIV patients. In addition, the
+coefficients before these variables are all negative, indicating that
+they all negatively affect hiv_diagnoses_num.Finally, the multiple
+linear regression model constructed
 ishiv_diagnoses_num=4514.4981-2.0224<em>year-354.5227</em>boroughBronx-358.4969<em>boroughBrooklyn-362.8923</em>boroughManhattan-363.2155<em>boroughQueens-373.2117</em>boroughStaten\nIsland-26.8822<em>sexFemale-6.1453</em>sexMale-62.6910<em>raceAsian
 /Pacific\nIslander-36.4375</em>raceBlack-41.7176<em>raceLatino/Hispanic-65.3393</em>raceOther/Unknown-57.9514*raceWhite.</p>
 </div>
@@ -542,8 +552,6 @@ conform well to normality and randomness. Analyzing the reason, it may
 be due to the existence of individual outliers, which affects the
 distribution of the data and the distribution of the residuals, making
 them not conform to normality and randomness.</strong></p>
-<p><strong>if github md knit fail,change to the html
-output“</strong></p>
 </div>
 
 

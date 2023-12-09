@@ -40,7 +40,8 @@ leaflet(filtered_data) %>%
 
 ```
 
-summary:
-Here, an interactive map was created using the leaflet package to visualize the distribution of HIV service facilities and detailed information to help better understand the allocation of resources for HIV prevention and treatment.
+Here is an interactive map using the leaflet package to visualize the distribution of HIV service facilities and detailed information to help better understand the allocation of resources for HIV prevention and treatment. 
+
+There are a number of immediate problems. As expected, Manhattan has the largest number of testing resources but the testing and service locations are heavily concentrated at the downtown and midtown areas with a few locations open immediately north of Central park. This heavily biases the data as those living in areas with less coverage are less likely to see city services, and non-governmental services may not report to the city (though they must always report to New York State). The Bronx is arguably the best suite borough from a distribution stand point as the only significant area that lacks coverage are the neighborhoods surrounding the Washington bridge. This creates another problem that we haven't explored yet - but where do transient, homeless, and unhoused populations count in the boroughs? This section of the Bronx highlights this well as the closest testing and service location is undoubtedly Manhattan with almost a certainly nicer facilities based on the SES status of both locations. 
 
 
