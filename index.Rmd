@@ -83,7 +83,9 @@ HIV_service=
   select(unique_id,facilityname,service_type, address,borough,state,zipcode,latitude,longitude)
   
 ```
+
 **Calculate the sum, mean, median, standard deviation of HIV/AIDS indicators** 
+
 ```{r}
 colnames(nyc_HIV1)
 colnames(nyc_HIV2)
@@ -226,7 +228,7 @@ ggplot(All, aes(x = year, y = hiv_diagnoses_num)) +
 summary:
 The number of patients diagnosed in different years showed significant differences. The overall trend is decreasing from year to year. This also reflects the growing importance that has been placed on HIV.
 
-# Exploratory statistical analyses
+# Exploratory statistical analyses.
 **Correlation analysis:After the Visualizations is there any association between different variables such as neighborhood, age, gender, and race.**
 
 **T-test for HPV prevalence in gender-specific populations.**
@@ -240,7 +242,6 @@ male_data <- na.omit(nyc_HIV1[nyc_HIV1$sex == "Male",]$hiv_diagnoses_num)
 # Perform T-test
 t.test(female_data, male_data)
 ```
-
 summary:
 The t-test passed the test of significance indicating that there was a significant difference in the number of males and females with HIV.
 
@@ -249,7 +250,6 @@ The t-test passed the test of significance indicating that there was a significa
 anova1 <- anova(lm(hiv_diagnoses_num ~ race, data = nyc_HIV1))
 print(anova1)
 ```
-
 summary:
 The ANOVA passed the test of significance, indicating that there is indeed a significant difference in the number of people of different races who have HIV.
 
@@ -258,7 +258,6 @@ The ANOVA passed the test of significance, indicating that there is indeed a sig
 anova2 <- anova(lm(hiv_diagnoses_num ~ age, data = nyc_HIV2))
 print(anova2)
 ```
-
 summary:
 The ANOVA passed the test of significance indicating that there is a significant difference in the number of HIV in different age groups.
 
@@ -269,11 +268,10 @@ race_table
 # Perform chi-square test
 chisq.test(race_table)
 ```
-
 summary:
 The chi-square test passes the test of significance, indicating that there is a significant relationship between race and gender.
 
-## Linear regression analysis
+# Linear regression analysis
 ```{r}
 # Defining a Unique Thermal Coding Processor
 library(caret)
@@ -286,11 +284,10 @@ nyc_HIV4<-nyc_HIV3[,-c(2,3,4,5,7,8,9,10,11,12,18,21)]
 model <- lm(hiv_diagnoses_num ~. , data = nyc_HIV4)
 summary(model)
 ```
-
 summary:
 The coefficients of all variables passed the significance test, indicating that all of these independent variables have a significant effect on hiv_diagnoses_num. The coefficient before the variable "boroughStaten\\\nIsIand" has the largest absolute value, which means that it has the largest effect on the number of HIV patients. In addition, the coefficients before these variables are all negative, indicating that they all negatively affect hiv_diagnoses_num.Finally, the multiple linear regression model constructed ishiv_diagnoses_num=4514.4981-2.0224*year-354.5227*boroughBronx-358.4969*boroughBrooklyn-362.8923*boroughManhattan-363.2155*boroughQueens-373.2117*boroughStaten\\nIsland-26.8822*sexFemale-6.1453*sexMale-62.6910*raceAsian /Pacific\\nIslander-36.4375*raceBlack-41.7176*raceLatino/Hispanic-65.3393*raceOther/Unknown-57.9514*raceWhite.
 
-## Regression model test
+# Regression model test
 ```{r}
 #Drawing demonstration
 par(mfrow=c(2, 2))  
@@ -330,7 +327,6 @@ These findings collectively offer valuable insights into the epidemiological pat
 # Discussion
 
 ## Findings from the Analysis
-
  * Gender and HIV Prevalence: There tends to be a difference in HIV infection rates and diagnosis numbers between males and females.In the analysis we conducted, it was found that the number of HIV diagnoses was significantly higher in males compared to females. 
  * Ethnic Disparities in HIV Diagnoses: Our ANOVA tests revealed significant differences in HIV diagnoses among different races and age groups,emphasizing the persistence of inequities in HIV prevalence.
  * Variation Across Boroughs: The linear regression analysis showed significant differences in HIV diagnoses among the boroughs of New York City. Boroughs like Staten Island exhibited the largest negative coefficients in the model, indicating a lower number of HIV diagnoses compared to other regions. The differences are possibly influenced by factors such as local public health policies, access to healthcare services, and community-level prevention efforts.
