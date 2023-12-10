@@ -22,7 +22,9 @@ output:
 
 ### Screencast
 
-
+```{r}
+vembedr::embed_url("https://youtu.be/XjPJOJ36Nks")
+```
 
 ### Collaborators
 * Jake W. Coldiron(jwc2177)
